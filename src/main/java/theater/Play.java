@@ -1,11 +1,11 @@
 package theater;
 
 /**
- * Class representing an invoice for a customer.
+ * Class representing a paly.
  */
 public class Play {
     /**
-     * Class representing an invoice for a customer.
+     * Class representing a paly.
      */
 
     private String name;
