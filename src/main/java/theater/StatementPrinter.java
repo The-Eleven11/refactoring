@@ -36,12 +36,12 @@ public class StatementPrinter {
             ));
         }
 
-        result.append(String.format("Amount owed is %s%n", getFormat(getAmount())));
+        result.append(String.format("Amount owed is %s%n", usd(getTotalAmount())));
         result.append(String.format("You earned %s credits%n", getTotalVolumeCredits()));
         return result.toString();
     }
 
-    private int getAmount() {
+    private int getTotalAmount() {
         int totalAmount = 0;
         for (Performance p : getInvoice().getPerformances()) {
             totalAmount += getAmount(p);
@@ -57,7 +57,7 @@ public class StatementPrinter {
         return volumeCredits;
     }
 
-    private String getFormat(int totalAmount) {
+    private String usd(int totalAmount) {
         return NumberFormat.getCurrencyInstance(Locale.US).format(totalAmount / Constants.ONE_HUNDRED);
     }
 
@@ -76,6 +76,7 @@ public class StatementPrinter {
         return getPlays().get(performance.getPlayID());
     }
 
+    @SuppressWarnings({"checkstyle:OverloadMethodsDeclarationOrder", "checkstyle:SuppressWarnings"})
     private int getAmount(Performance performance) {
         int result;
         switch (getPlay(performance).getType()) {
