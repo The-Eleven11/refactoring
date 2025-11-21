@@ -22,25 +22,39 @@ public class StatementPrinter {
      * @throws RuntimeException if one of the play types is not known
      */
     public String statement() {
-        int totalAmount = 0;
-        int volumeCredits = 0;
+        
         final StringBuilder result =
                 new StringBuilder("Statement for " + getInvoice().getCustomer() + System.lineSeparator());
 
         for (Performance p : getInvoice().getPerformances()) {
+            result.append(String.format(
+                    "  %s: %s (%s seats)%n",
+                    getPlay(p).getName(),
+                    NumberFormat.getCurrencyInstance(Locale.US)
+                            .format(getAmount(p) / Constants.ONE_HUNDRED),
+                    p.getAudience()
+            ));
+        }
 
-            // add volume credits
-            volumeCredits = getVolumeCredits(p, volumeCredits);
+        result.append(String.format("Amount owed is %s%n", getFormat(getAmount())));
+        result.append(String.format("You earned %s credits%n", getTotalVolumeCredits()));
+        return result.toString();
+    }
 
-            // print line for this order
-            result.append(String.format("  %s: %s (%s seats)%n", getPlay(p).getName(),
-                    NumberFormat.getCurrencyInstance(Locale.US).format(getAmount(p) / Constants.ONE_HUNDRED),
-                    p.getAudience()));
+    private int getAmount() {
+        int totalAmount = 0;
+        for (Performance p : getInvoice().getPerformances()) {
             totalAmount += getAmount(p);
         }
-        result.append(String.format("Amount owed is %s%n", getFormat(totalAmount)));
-        result.append(String.format("You earned %s credits%n", volumeCredits));
-        return result.toString();
+        return totalAmount;
+    }
+
+    private int getTotalVolumeCredits() {
+        int volumeCredits = 0;
+        for (Performance p : getInvoice().getPerformances()) {
+            volumeCredits = getVolumeCredits(p, volumeCredits);
+        }
+        return volumeCredits;
     }
 
     private String getFormat(int totalAmount) {
